@@ -102,8 +102,8 @@ export default {
     // window.addEventListener('storage', this.afterQRScan)
   },
   mounted() {
-    if (this.loginForm.username === '') {
-      this.$refs.username.focus()
+    if (this.loginForm.email === '') {
+      this.$refs.email.focus()
     } else if (this.loginForm.password === '') {
       this.$refs.password.focus()
     }
