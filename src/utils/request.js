@@ -2,7 +2,7 @@ import axios from 'axios'
 import { pick } from 'lodash'
 import { MessageBox, Message } from 'element-ui'
 import store from '@/store'
-import { getAll } from '@/utils/auth'
+import { getAll, setAll } from '@/utils/auth'
 
 // create an axios instance
 const service = axios.create({
@@ -51,6 +51,12 @@ service.interceptors.response.use(
     // const authHeaders = pick(response.headers, ['access-token', 'client', 'expiry', 'uid', 'token-type'])
     const authHeaders = pick(response.headers, ['access-token', 'client', 'expiry', 'uid'])
     store.commit('auth', authHeaders)
+    const tokens = {
+      'access-token': authHeaders['access-token'],
+      'client': authHeaders['client'],
+      'uid': authHeaders['uid']
+    }
+    setAll(tokens)
 
     // ユーザー情報
     const res = response.data

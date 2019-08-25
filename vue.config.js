@@ -48,7 +48,8 @@ module.exports = {
     //   }
     // },
     // after: require('./mock/mock-server.js')
-    proxy: 'http://localhost:3000'
+    proxy: 'http://localhost:3000/'
+    // proxy: 'https://pure-headland-46769.herokuapp.com/'
   },
   configureWebpack: {
     // provide the app's title in webpack's name field, so that
