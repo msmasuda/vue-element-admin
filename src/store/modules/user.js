@@ -1,11 +1,11 @@
 import { login, logout, getInfo } from '@/api/user'
-import { getToken, removeToken, setToken, setClient, setUid } from '@/utils/auth'
+import { getToken, getClient, getUid, removeToken, removeClient, removeUid, setToken, setClient, setUid } from '@/utils/auth'
 import router, { resetRouter } from '@/router'
 
 const state = {
   token: getToken(),
-  client: '',
-  uid: '',
+  client: getClient(),
+  uid: getUid(),
   name: '',
   avatar: '',
   introduction: '',
@@ -42,9 +42,6 @@ const actions = {
     const { email, password } = userInfo
     return new Promise((resolve, reject) => {
       login({ email: email.trim(), password: password }).then(response => {
-        // const { data } = response
-        // commit('SET_TOKEN', data.token)
-        // setToken(data.token)
         resolve()
       }).catch(error => {
         reject(error)
@@ -97,8 +94,12 @@ const actions = {
     return new Promise((resolve, reject) => {
       logout(state.token).then(() => {
         commit('SET_TOKEN', '')
-        commit('SET_ROLES', [])
+        // commit('SET_ROLES', [])
         removeToken()
+        commit('SET_CLIENT', '')
+        removeClient()
+        commit('SET_UID', '')
+        removeUid()
         resetRouter()
         resolve()
       }).catch(error => {
@@ -111,8 +112,12 @@ const actions = {
   resetToken({ commit }) {
     return new Promise(resolve => {
       commit('SET_TOKEN', '')
-      commit('SET_ROLES', [])
+      // commit('SET_ROLES', [])
       removeToken()
+      commit('SET_CLIENT', '')
+      removeClient()
+      commit('SET_UID', '')
+      removeUid()
       resolve()
     })
   },
