@@ -1,18 +1,26 @@
 import { login, logout, getInfo } from '@/api/user'
-import { getToken, setToken, removeToken } from '@/utils/auth'
+import { getToken, getClient, getUid, removeToken, removeClient, removeUid, setToken, setClient, setUid } from '@/utils/auth'
 import router, { resetRouter } from '@/router'
 
 const state = {
   token: getToken(),
+  client: getClient(),
+  uid: getUid(),
   name: '',
   avatar: '',
   introduction: '',
-  roles: []
+  roles: ['admin']
 }
 
 const mutations = {
   SET_TOKEN: (state, token) => {
     state.token = token
+  },
+  SET_CLIENT: (state, client) => {
+    state.client = client
+  },
+  SET_UID: (state, uid) => {
+    state.uid = uid
   },
   SET_INTRODUCTION: (state, introduction) => {
     state.introduction = introduction
@@ -31,16 +39,25 @@ const mutations = {
 const actions = {
   // user login
   login({ commit }, userInfo) {
-    const { username, password } = userInfo
+    const { email, password } = userInfo
     return new Promise((resolve, reject) => {
-      login({ username: username.trim(), password: password }).then(response => {
-        const { data } = response
-        commit('SET_TOKEN', data.token)
-        setToken(data.token)
+      login({ email: email.trim(), password: password }).then(response => {
         resolve()
       }).catch(error => {
         reject(error)
       })
+    })
+  },
+
+  setAuth({ commit }, auth) {
+    return new Promise(resolve => {
+      commit('SET_TOKEN', auth['access-token'])
+      setToken(auth['access-token'])
+      commit('SET_CLIENT', auth['client'])
+      setClient(auth['client'])
+      commit('SET_UID', auth['uid'])
+      setUid(auth['uid'])
+      resolve()
     })
   },
 
@@ -77,8 +94,12 @@ const actions = {
     return new Promise((resolve, reject) => {
       logout(state.token).then(() => {
         commit('SET_TOKEN', '')
-        commit('SET_ROLES', [])
+        // commit('SET_ROLES', [])
         removeToken()
+        commit('SET_CLIENT', '')
+        removeClient()
+        commit('SET_UID', '')
+        removeUid()
         resetRouter()
         resolve()
       }).catch(error => {
@@ -91,8 +112,12 @@ const actions = {
   resetToken({ commit }) {
     return new Promise(resolve => {
       commit('SET_TOKEN', '')
-      commit('SET_ROLES', [])
+      // commit('SET_ROLES', [])
       removeToken()
+      commit('SET_CLIENT', '')
+      removeClient()
+      commit('SET_UID', '')
+      removeUid()
       resolve()
     })
   },
@@ -100,10 +125,10 @@ const actions = {
   // dynamically modify permissions
   changeRoles({ commit, dispatch }, role) {
     return new Promise(async resolve => {
-      const token = role + '-token'
+      // const token = role + '-token'
 
-      commit('SET_TOKEN', token)
-      setToken(token)
+      // commit('SET_TOKEN', token)
+      // setToken(token)
 
       const { roles } = await dispatch('getInfo')
 
