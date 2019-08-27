@@ -72,8 +72,8 @@ export default {
     }
     return {
       loginForm: {
-        email: 'admin@example.com',
-        password: 'password'
+        email: '',
+        password: ''
       },
       loginRules: {
         email: [{ required: true, trigger: 'blur', validator: validateEmail }],

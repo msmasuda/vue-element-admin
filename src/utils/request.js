@@ -2,7 +2,7 @@ import axios from 'axios'
 import { pick } from 'lodash'
 import { MessageBox, Message } from 'element-ui'
 import store from '@/store'
-import { getAll, setAll } from '@/utils/auth'
+import { getToken, getClient, getUid } from '@/utils/auth'
 
 // create an axios instance
 const service = axios.create({
@@ -17,13 +17,9 @@ service.interceptors.request.use(
     // do something before request is sent
 
     if (store.getters.auth) {
-      // let each request carry token
-      // ['X-Token'] is a custom headers key
-      // please modify it according to the actual situation
-      const tokens = getAll()
-      config.headers['access-token'] = tokens['access-token']
-      config.headers['client'] = tokens['client']
-      config.headers['uid'] = tokens['uid']
+      config.headers['access-token'] = getToken()
+      config.headers['client'] = getClient()
+      config.headers['uid'] = getUid()
     }
     return config
   },
@@ -50,13 +46,7 @@ service.interceptors.response.use(
     // 認証情報を保存
     // const authHeaders = pick(response.headers, ['access-token', 'client', 'expiry', 'uid', 'token-type'])
     const authHeaders = pick(response.headers, ['access-token', 'client', 'expiry', 'uid'])
-    store.commit('auth', authHeaders)
-    const tokens = {
-      'access-token': authHeaders['access-token'],
-      'client': authHeaders['client'],
-      'uid': authHeaders['uid']
-    }
-    setAll(tokens)
+    store.dispatch('user/setAuth', authHeaders)
 
     // ユーザー情報
     const res = response.data

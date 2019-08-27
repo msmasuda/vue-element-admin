@@ -4,25 +4,6 @@ const TokenKey = 'access-token'
 const ClientKey = 'client'
 const UidKey = 'uid'
 
-export function getAll() {
-  return {
-    TokenKey: Cookies.get(TokenKey),
-    ClientKey: Cookies.get(ClientKey),
-    UidKey: Cookies.get(UidKey)
-  }
-}
-export function setAll(tokens) {
-  Cookies.set(TokenKey, tokens['access-token'])
-  Cookies.set(ClientKey, tokens['client'])
-  Cookies.set(UidKey, tokens['uid'])
-  return
-}
-export function removeAll() {
-  Cookies.remove(TokenKey)
-  Cookies.remove(ClientKey)
-  Cookies.remove(UidKey)
-}
-
 export function getToken() {
   return Cookies.get(TokenKey)
 }

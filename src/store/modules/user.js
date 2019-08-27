@@ -1,9 +1,11 @@
 import { login, logout, getInfo } from '@/api/user'
-import { getToken, setToken, removeToken } from '@/utils/auth'
+import { getToken, removeToken, setToken, setClient, setUid } from '@/utils/auth'
 import router, { resetRouter } from '@/router'
 
 const state = {
   token: getToken(),
+  client: '',
+  uid: '',
   name: '',
   avatar: '',
   introduction: '',
@@ -13,6 +15,12 @@ const state = {
 const mutations = {
   SET_TOKEN: (state, token) => {
     state.token = token
+  },
+  SET_CLIENT: (state, client) => {
+    state.client = client
+  },
+  SET_UID: (state, uid) => {
+    state.uid = uid
   },
   SET_INTRODUCTION: (state, introduction) => {
     state.introduction = introduction
@@ -34,13 +42,25 @@ const actions = {
     const { email, password } = userInfo
     return new Promise((resolve, reject) => {
       login({ email: email.trim(), password: password }).then(response => {
-        const { data } = response
-        commit('SET_TOKEN', data.token)
-        setToken(data.token)
+        // const { data } = response
+        // commit('SET_TOKEN', data.token)
+        // setToken(data.token)
         resolve()
       }).catch(error => {
         reject(error)
       })
+    })
+  },
+
+  setAuth({ commit }, auth) {
+    return new Promise(resolve => {
+      commit('SET_TOKEN', auth['access-token'])
+      setToken(auth['access-token'])
+      commit('SET_CLIENT', auth['client'])
+      setClient(auth['client'])
+      commit('SET_UID', auth['uid'])
+      setUid(auth['uid'])
+      resolve()
     })
   },
 
@@ -100,10 +120,10 @@ const actions = {
   // dynamically modify permissions
   changeRoles({ commit, dispatch }, role) {
     return new Promise(async resolve => {
-      const token = role + '-token'
+      // const token = role + '-token'
 
-      commit('SET_TOKEN', token)
-      setToken(token)
+      // commit('SET_TOKEN', token)
+      // setToken(token)
 
       const { roles } = await dispatch('getInfo')
 
